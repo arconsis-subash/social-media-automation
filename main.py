@@ -14,7 +14,7 @@ from openai import OpenAI
 IMAP_HOST = os.getenv("GMAIL_IMAP_HOST", "imap.gmail.com")
 IMAP_PORT = int(os.getenv("GMAIL_IMAP_PORT", "993"))
 SMTP_HOST = os.getenv("GMAIL_SMTP_HOST", "smtp.gmail.com")
-SMTP_PORT = int(os.getenv("GMAIL_SMTP_PORT", "587"))
+SMTP_PORT = int(os.getenv("GMAIL_SMTP_PORT", 587))
 
 GMAIL_ADDRESS = os.getenv("GMAIL_ADDRESS")
 GMAIL_APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD")
