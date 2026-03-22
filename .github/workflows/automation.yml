@@ -1,0 +1,66 @@
+name: Content Automation
+
+on:
+  schedule:
+    # 09:00, 13:00, 17:00, 21:00 UTC
+    # Change these if you want your local timezone schedule instead.
+    - cron: "0 9,13,17,21 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: content-automation
+  cancel-in-progress: false
+
+jobs:
+  generate-reel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run content automation
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: "gpt-4.1-mini"
+          MAX_EMAILS: "5"
+          MAX_CANDIDATES: "12"
+
+          # News sources / feeds
+          TLDR_FEED_URL: ${{ secrets.TLDR_FEED_URL }}
+          TLDR_FROM_FILTER: "tldr"
+          TLDR_SUBJECT_FILTER: "TLDR"
+          EXTRA_RSS_FEEDS: ${{ secrets.EXTRA_RSS_FEEDS }}
+
+          # Email delivery
+          GMAIL_SMTP_HOST: ${{ secrets.GMAIL_SMTP_HOST }}
+          GMAIL_SMTP_PORT: ${{ secrets.GMAIL_SMTP_PORT }}
+          GMAIL_ADDRESS: ${{ secrets.GMAIL_ADDRESS }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
+
+          # Optional video/posting integrations
+          AUTOSHORTS_API_KEY: ${{ secrets.AUTOSHORTS_API_KEY }}
+          BUFFER_API_TOKEN: ${{ secrets.BUFFER_API_TOKEN }}
+
+          # Optional config
+          BRAND_NAME: "Hungry Mind"
+          CONTENT_NICHE: "AI, DevOps, Kubernetes, software engineering"
+          DRY_RUN: "false"
+        run: |
+          python main.py

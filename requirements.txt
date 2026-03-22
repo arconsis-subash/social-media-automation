@@ -1,0 +1,6 @@
+openai
+requests
+feedparser
+python-dotenv
+openai>=1.30.0
+beautifulsoup4>=4.12.0
